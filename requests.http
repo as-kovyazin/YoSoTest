@@ -1,14 +1,20 @@
 ###
-// получить список портфелей
-GET http://localhost:8000/briefcases
+// создать пользователя
+PUT http://localhost:8000/user/create
 Content-Type: application/json
-Authorization: Bearer A123456789
+
+
+###
+// получить список портфелей
+GET http://localhost:8000/api/briefcase
+Content-Type: application/json
+Authorization: Bearer aa3aa4dec38adde0cd38
 
 ###
 // Добавление акции в портфель
-POST http://localhost:8000/promotion/add
+POST http://localhost:8000/api/promotion/add
 Content-Type: application/json
-Authorization: Bearer A123456789
+Authorization: Bearer aa3aa4dec38adde0cd38
 
 {
   "briefcaseId": 1,
@@ -18,9 +24,9 @@ Authorization: Bearer A123456789
 
 ###
 // Удаление акции из портфеля
-POST http://localhost:8000/promotion/delete
+POST http://localhost:8000/api/promotion/delete
 Content-Type: application/json
-Authorization: Bearer A123456789
+Authorization: Bearer aa3aa4dec38adde0cd38
 
 {
   "briefcaseId": 1,
@@ -30,9 +36,9 @@ Authorization: Bearer A123456789
 
 ###
 // Просмотр стоимости портфеля
-POST http://localhost:8000/briefcase
+POST http://localhost:8000/api/briefcase
 Content-Type: application/json
-Authorization: Bearer A123456789
+Authorization: Bearer aa3aa4dec38adde0cd38
 
 {
   "briefcaseId": 1
