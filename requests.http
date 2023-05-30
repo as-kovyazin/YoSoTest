@@ -1,0 +1,39 @@
+###
+// получить список портфелей
+GET http://localhost:8000/briefcases
+Content-Type: application/json
+Authorization: Bearer A123456789
+
+###
+// Добавление акции в портфель
+POST http://localhost:8000/promotion/add
+Content-Type: application/json
+Authorization: Bearer A123456789
+
+{
+  "briefcaseId": 1,
+  "ticker": "ABCD",
+  "quantity": 10
+}
+
+###
+// Удаление акции из портфеля
+POST http://localhost:8000/promotion/delete
+Content-Type: application/json
+Authorization: Bearer A123456789
+
+{
+  "briefcaseId": 1,
+  "ticker": "ABCD",
+  "quantity": 2
+}
+
+###
+// Просмотр стоимости портфеля
+POST http://localhost:8000/briefcase
+Content-Type: application/json
+Authorization: Bearer A123456789
+
+{
+  "briefcaseId": 1
+}

@@ -17,19 +17,19 @@ services:
     networks:
       - net
 
-  php-fpm-8.1:
-    container_name: php-fpm-8.1
+  php-fpm-7.4:
+    container_name: php-fpm-7.4
     build:
-      context: ./php-fpm/8.1
+      context: ./php-fpm/7.4
       args:
         userName: ${DOCKER_USER_NAME}
         userGroup: ${DOCKER_USER_GROUP}
     environment:
-      - PHP_IDE_CONFIG=serverName=php8.1
+      - PHP_IDE_CONFIG=serverName=php7.4
       - XDEBUG_CONFIG=client_host=172.17.0.1 log_level=0
     volumes:
       - ./server:/var/www/html
-      - ./php-fpm/8.1/php.ini:/usr/local/etc/php/php.ini
+      - ./php-fpm/7.4/php.ini:/usr/local/etc/php/php.ini
     networks:
       - net
     depends_on:
@@ -43,9 +43,9 @@ services:
     volumes:
       - ./server:/var/www/html
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
-      - ./nginx/php8.1.conf:/etc/nginx/php8.1.conf
+      - ./nginx/php7.4.conf:/etc/nginx/php7.4.conf
     depends_on:
-      - php-fpm-8.1
+      - php-fpm-7.4
       - db-postgres
     networks:
       - net

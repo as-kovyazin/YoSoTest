@@ -51,7 +51,7 @@
         ]
     },
     "symfony/flex": {
-        "version": "2.3",
+        "version": "1.20",
         "recipe": {
             "repo": "github.com/symfony/recipes",
             "branch": "main",
@@ -82,7 +82,7 @@
         ]
     },
     "symfony/maker-bundle": {
-        "version": "1.48",
+        "version": "1.43",
         "recipe": {
             "repo": "github.com/symfony/recipes",
             "branch": "main",
