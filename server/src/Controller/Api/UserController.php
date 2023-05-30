@@ -9,10 +9,10 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @Route("/api/user/", name="api_user_")
  */
-class User extends AbstractController
+class UserController extends MainController
 {
     /**
-     * @Route("", name="index")
+     * @Route("", name="index", methods={"POST"})
      */
     public function index(): JsonResponse
     {

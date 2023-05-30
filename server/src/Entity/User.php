@@ -89,14 +89,16 @@ class User implements UserInterface
         return [];
     }
 
-    public function getPassword()
+    public function getPassword(): ?string
     {
         // TODO: Implement getPassword() method.
+        return null;
     }
 
-    public function getSalt()
+    public function getSalt(): ?string
     {
         // TODO: Implement getSalt() method.
+        return null;
     }
 
     public function eraseCredentials()
@@ -104,9 +106,10 @@ class User implements UserInterface
         // TODO: Implement eraseCredentials() method.
     }
 
-    public function getUsername()
+    public function getUsername(): string
     {
         // TODO: Implement getUsername() method.
+        return "";
     }
 
     public function __call($name, $arguments)
