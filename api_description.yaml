@@ -1,0 +1,91 @@
+openapi: 3.0.3
+info:
+  title: API взаимодействия с портфелем акций
+  version: 1.0.0
+  description: |-
+    Описание API
+servers:
+  - url: http://localhost:8000
+tags:
+  - name: user
+    description: Операции с пользователем
+  - name: briefcase
+    description: Операции с портфелем акций
+paths:
+  /user/create:
+    post:
+      tags:
+        - user
+      summary: Создание пользователя
+      description: Создание пользователя и получение API-ключа
+      operationId: getApiKey
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/API-key'
+  /api/briefcase:
+    get:
+      tags:
+        - briefcase
+      summary: Получение списка портфелей пользователя
+      description: Получение списка портфелей пользователя
+      operationId: getBriefcases
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/briefcaseList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+components:
+  responses:
+    NotFound:
+      description: The specified resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  schemas:
+    API-key:
+      type: object
+      properties:
+        apiKey:
+          type: string
+    briefcaseList:
+      type: object
+      properties:
+        briefcases:
+          items:
+            $ref: '#/components/schemas/briefcase'
+    briefcase:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+        - message
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: string
