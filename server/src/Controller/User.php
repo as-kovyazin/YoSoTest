@@ -15,7 +15,7 @@ class User extends AbstractController
 {
 
     /**
-     * @Route("create", name="create")
+     * @Route("create", name="create", methods={"POST"})
      */
     public function create(UserService $userService): JsonResponse
     {

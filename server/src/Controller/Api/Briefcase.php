@@ -4,14 +4,13 @@ namespace App\Controller\Api;
 
 use App\DTO\RequestDTO;
 use App\Services\BriefcaseService;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/api/briefcase/", name="api_briefcase_")
+ * @Route("/api/briefcase", name="api_briefcase_")
  */
 class Briefcase extends MainController
 {
@@ -20,8 +19,7 @@ class Briefcase extends MainController
      */
     public function index(BriefcaseService $briefcaseService): JsonResponse
     {
-        $user = $this->getUser();
-        $briefcases = $briefcaseService->getBriefcases($user);
+        $briefcases = $briefcaseService->getBriefcases($this->getUser());
 
         return $this->json(['briefcases' => $this->getResponseBriefcases($briefcases)]);
     }
@@ -31,8 +29,7 @@ class Briefcase extends MainController
      */
     public function create(BriefcaseService $briefcaseService): JsonResponse
     {
-        $user = $this->getUser();
-        $briefcase = $briefcaseService->createEmptyBriefcaseForUser($user);
+        $briefcase = $briefcaseService->createEmptyBriefcaseForUser($this->getUser());
 
         if (is_null($briefcase)) {
             return $this->json([], Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -46,16 +43,14 @@ class Briefcase extends MainController
     }
 
     /**
-     * @Route("promotion_add", name="promotion_add", methods={"POST"})
+     * @Route("/promotion/add", name="promotion_add", methods={"POST"})
      */
     public function promotionAdd(Request $request, BriefcaseService $briefcaseService): JsonResponse
     {
-        $user = $this->getUser();
-
         $request = $this->transformJsonBody($request);
 
         $requestDTO = new RequestDTO($request);
-        $error = $briefcaseService->validate($requestDTO, $user);
+        $error = $briefcaseService->validate($requestDTO, $this->getUser());
 
         if (is_string($error)) {
             return $this->json(['error' => $error], Response::HTTP_BAD_REQUEST);
@@ -67,22 +62,18 @@ class Briefcase extends MainController
             return $this->json([], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-        $result = [];
-
-        return $this->json($result);
+        return $this->json(null);
     }
 
     /**
-     * @Route("promotion_delete", name="promotion_delete", methods={"POST"})
+     * @Route("/promotion/delete", name="promotion_delete", methods={"POST"})
      */
     public function promotionDelete(Request $request, BriefcaseService $briefcaseService): JsonResponse
     {
-        $user = $this->getUser();
-
         $request = $this->transformJsonBody($request);
 
         $requestDTO = new RequestDTO($request);
-        $error = $briefcaseService->validateForDelete($requestDTO, $user);
+        $error = $briefcaseService->validateForDelete($requestDTO, $this->getUser());
 
         if (is_string($error)) {
             return $this->json(['error' => $error], Response::HTTP_BAD_REQUEST);
@@ -94,22 +85,18 @@ class Briefcase extends MainController
             return $this->json(['error' => $error], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-        $result = [];
-
-        return $this->json($result);
+        return $this->json(null);
     }
 
     /**
-     * @Route("cost", name="get_cost", methods={"POST"})
+     * @Route("/total_cost", name="get_cost", methods={"POST"})
      */
     public function getCost(Request $request, BriefcaseService $briefcaseService): JsonResponse
     {
-        $user = $this->getUser();
-
         $request = $this->transformJsonBody($request);
 
         $requestDTO = new RequestDTO($request);
-        $error = $briefcaseService->validate($requestDTO, $user);
+        $error = $briefcaseService->validate($requestDTO, $this->getUser());
 
         if (is_string($error)) {
             return $this->json(['error' => $error], Response::HTTP_BAD_REQUEST);
