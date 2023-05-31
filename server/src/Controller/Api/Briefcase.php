@@ -18,9 +18,12 @@ class Briefcase extends MainController
     /**
      * @Route("", name="index", methods={"GET"})
      */
-    public function index(): JsonResponse
+    public function index(BriefcaseService $briefcaseService): JsonResponse
     {
-        return $this->json([]);
+        $user = $this->getUser();
+        $briefcases = $briefcaseService->getBriefcases($user);
+
+        return $this->json(['briefcases' => $this->getResponseBriefcases($briefcases)]);
     }
 
     /**
@@ -97,7 +100,7 @@ class Briefcase extends MainController
     }
 
     /**
-     * @Route("get_cost", name="get_cost", methods={"POST"})
+     * @Route("cost", name="get_cost", methods={"POST"})
      */
     public function getCost(Request $request, BriefcaseService $briefcaseService): JsonResponse
     {
@@ -112,14 +115,24 @@ class Briefcase extends MainController
             return $this->json(['error' => $error], Response::HTTP_BAD_REQUEST);
         }
 
-        $error = $briefcaseService->getBriefcaseCost($requestDTO);
+        $costs = $briefcaseService->getBriefcaseCosts($requestDTO);
 
-        if (is_string($error)) {
-            return $this->json(['error' => $error], Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
-
-        $result = [];
+        $result = [
+            'costs' => $costs
+        ];
 
         return $this->json($result);
+    }
+
+    private function getResponseBriefcases($briefcases): array
+    {
+        $result = [];
+        foreach ($briefcases as $briefcase) {
+            $result[] = [
+                'id' => $briefcase->getId(),
+                'name' => $briefcase->getName(),
+            ];
+        }
+        return $result;
     }
 }

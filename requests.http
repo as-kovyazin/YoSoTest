@@ -46,5 +46,5 @@ Content-Type: application/json
 Authorization: Bearer aa3aa4dec38adde0cd38
 
 {
-  "briefcaseId": 1
+  "briefcaseId": 3
 }

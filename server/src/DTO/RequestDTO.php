@@ -13,9 +13,9 @@ class RequestDTO
 
     public function __construct(Request $request)
     {
-        $this->briefcaseId = $request->get("briefcaseId");
-        $this->ticker = $request->get("ticker");
-        $this->quantity = (int)$request->get("quantity");
+        $this->briefcaseId = $request->get("briefcaseId") ?: '';
+        $this->ticker = $request->get("ticker") ?: '';
+        $this->quantity = (int)$request->get("quantity") ?: 0;
     }
 
     public function getBriefcaseId(): string

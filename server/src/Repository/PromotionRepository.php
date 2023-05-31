@@ -99,11 +99,26 @@ class PromotionRepository extends ServiceEntityRepository
     public function getSumByBriefcase(int $briefcaseId): array
     {
         return $this->createQueryBuilder('p')
-            ->select('ticker, SUM(p.quantity) as quantity')
+            ->select('p.ticker, SUM(p.quantity) as quantity')
             ->andWhere("p.briefcase = :briefcaseId")
             ->setParameter('briefcaseId', $briefcaseId)
             ->addGroupBy('p.ticker')
             ->getQuery()
             ->getResult();
+    }
+
+    public function startTransaction()
+    {
+        $this->_em->getConnection()->beginTransaction();
+    }
+
+    public function commitTransaction()
+    {
+        $this->_em->getConnection()->commit();
+    }
+
+    public function rollbackTransaction()
+    {
+        $this->_em->getConnection()->rollBack();
     }
 }

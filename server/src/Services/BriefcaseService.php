@@ -56,8 +56,9 @@ class BriefcaseService
 
     public function removePromotionFromBriefcase(RequestDTO $requestDTO): ?string
     {
-        $startQuantity = $requestDTO->getQuantity();
+        $deleteQuantity = $requestDTO->getQuantity();
 
+        $this->promotionRepository->startTransaction();
         do {
             $promotion = $this->promotionRepository->getFirstByTicker(
                 $requestDTO->getBriefcaseId(),
@@ -65,15 +66,17 @@ class BriefcaseService
             );
 
             if (is_null($promotion)) {
+                $this->promotionRepository->rollbackTransaction();
                 return 'не найдена акция в портфеле';
             }
 
-            $startQuantity -= $promotion->getQuantity();
+            $deleteQuantity -= $promotion->getQuantity();
 
-            if ($startQuantity >= 0) {
+            if ($deleteQuantity >= 0) {
                 $this->promotionRepository->remove($promotion, true);
 
-                if ($startQuantity === 0) {
+                if ($deleteQuantity === 0) {
+                    $this->promotionRepository->commitTransaction();
                     return null;
                 }
 
@@ -82,11 +85,12 @@ class BriefcaseService
 
             $promotion->setQuantity($promotion->getQuantity() - $requestDTO->getQuantity());
             $this->promotionRepository->add($promotion, true);
-        } while ($startQuantity > 0);
+        } while ($deleteQuantity > 0);
+        $this->promotionRepository->commitTransaction();
         return null;
     }
 
-    public function getBriefcaseCost(RequestDTO $requestDTO): array
+    public function getBriefcaseCosts(RequestDTO $requestDTO): array
     {
         $result = $this->promotionRepository->getSumByBriefcase($requestDTO->getBriefcaseId());
 
@@ -125,10 +129,18 @@ class BriefcaseService
         );
 
         if ($quantityInDb < $requestDTO->getQuantity()) {
-            return "вы хотите удалить ticker больше чем у вас доступно";
+            return "вы не можете удалить ticker больше чем у вас доступно";
         }
 
         return null;
+    }
+
+    /**
+     * @return Briefcase[]
+     * */
+    public function getBriefcases(User $user): array
+    {
+        return $this->briefcaseRepository->findBy(['userId' => $user->getId()]);
     }
 
 }
