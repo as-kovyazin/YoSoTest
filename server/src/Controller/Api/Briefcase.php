@@ -32,7 +32,7 @@ class Briefcase extends MainController
         $briefcase = $briefcaseService->createEmptyBriefcaseForUser($this->getUser());
 
         if (is_null($briefcase)) {
-            return $this->json([], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return $this->json(null, Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
         $result = [
@@ -56,10 +56,9 @@ class Briefcase extends MainController
             return $this->json(['error' => $error], Response::HTTP_BAD_REQUEST);
         }
 
-        $requestDTO = $briefcaseService->addPromotionInBriefcase($requestDTO);
-
-        if (is_null($requestDTO)) {
-            return $this->json([], Response::HTTP_INTERNAL_SERVER_ERROR);
+        $error = $briefcaseService->addPromotionInBriefcase($requestDTO);
+        if (is_string($error)) {
+            return $this->json(['error' => $error], Response::HTTP_BAD_REQUEST);
         }
 
         return $this->json(null);

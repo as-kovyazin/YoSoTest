@@ -15,11 +15,16 @@ class BriefcaseService
 
     private BriefcaseRepository $briefcaseRepository;
     private PromotionRepository $promotionRepository;
+    private MoexService $moexService;
 
-    public function __construct(BriefcaseRepository $briefcaseRepository, PromotionRepository $promotionRepository)
-    {
+    public function __construct(
+        BriefcaseRepository $briefcaseRepository,
+        PromotionRepository $promotionRepository,
+        MoexService $moexService
+    ) {
         $this->briefcaseRepository = $briefcaseRepository;
         $this->promotionRepository = $promotionRepository;
+        $this->moexService = $moexService;
     }
 
     public function createEmptyBriefcaseForUser(User $user): ?Briefcase
@@ -36,22 +41,26 @@ class BriefcaseService
         return $briefcase;
     }
 
-    public function addPromotionInBriefcase(RequestDTO $requestDTO): ?Promotion
+    public function addPromotionInBriefcase(RequestDTO $requestDTO): ?string
     {
-        try {
-            $promotion = new Promotion();
+        $promotion = new Promotion();
 
-            $briefcase = $this->briefcaseRepository->find($requestDTO->getBriefcaseId());
+        $briefcase = $this->briefcaseRepository->find($requestDTO->getBriefcaseId());
 
-            $promotion->setBriefcase($briefcase)
-                ->setTicker($requestDTO->getTicker())
-                ->setQuantity($requestDTO->getQuantity());
-
-            $this->promotionRepository->add($promotion, true);
-        } catch (Throwable $err) {
-            return null;
+        if ($this->validTicker($requestDTO->getTicker()) === false) {
+            return 'Переданный ticker не найден';
         }
-        return $promotion;
+
+        if ($requestDTO->getQuantity() <= 0) {
+            return 'Количество ticker не может быть меньше или равно 0';
+        }
+
+        $promotion->setBriefcase($briefcase)
+            ->setTicker($requestDTO->getTicker())
+            ->setQuantity($requestDTO->getQuantity());
+
+        $this->promotionRepository->add($promotion, true);
+        return null;
     }
 
     public function removePromotionFromBriefcase(RequestDTO $requestDTO): ?string
@@ -93,6 +102,23 @@ class BriefcaseService
     public function getBriefcaseCosts(RequestDTO $requestDTO): array
     {
         $result = $this->promotionRepository->getSumByBriefcase($requestDTO->getBriefcaseId());
+
+        $tickers = $this->moexService->getTickers();
+
+        $sumOfBriefcase = 0;
+
+        foreach ($result as $index => $tickerInfo) {
+            $tickerCost = $tickers[$tickerInfo['ticker']];
+            $totalTickerCost = $tickerCost * $tickerInfo['quantity'];
+            $sumOfBriefcase += $totalTickerCost;
+            $result[$index]['cost'] = $tickerCost;
+            $result[$index]['total_cost'] = $totalTickerCost;
+        }
+
+        foreach ($result as $index => $tickerInfo) {
+            $totalTickerCost = $tickerInfo['total_cost'];
+            $result[$index]['share'] = round($totalTickerCost/$sumOfBriefcase, 4) * 100;
+        }
 
         return $result;
     }
@@ -141,6 +167,12 @@ class BriefcaseService
     public function getBriefcases(User $user): array
     {
         return $this->briefcaseRepository->findBy(['userId' => $user->getId()]);
+    }
+
+    private function validTicker(string $ticker): bool
+    {
+        $tickers = $this->moexService->getTickers();
+        return isset($tickers[$ticker]);
     }
 
 }

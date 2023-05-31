@@ -21,7 +21,7 @@ class User extends AbstractController
     {
         $user = $userService->createUser();
         if (is_null($user)) {
-            return $this->json([], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return $this->json(null, Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
         $result = [

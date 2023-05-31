@@ -4,3 +4,4 @@ GET http://iss.moex.com/iss/statistics/engines/stock/currentprices.json?tradings
 Content-Type: application/json
 
 ###
+GET https://iss.moex.com/iss/engines/stock/markets/shares/boards/TQBR/securities.json?iss.meta=off&iss.only=marketdata&marketdata.columns=SECID,LAST

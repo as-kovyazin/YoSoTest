@@ -26,9 +26,9 @@ Content-Type: application/json
 Authorization: Bearer {{apiKey}}
 
 {
-  "briefcaseId": 6,
-  "ticker": "ABCD",
-  "quantity": 10
+  "briefcaseId": 7,
+  "ticker": "BSPBP",
+  "quantity": 100
 }
 
 ###
@@ -38,8 +38,8 @@ Content-Type: application/json
 Authorization: Bearer {{apiKey}}
 
 {
-  "briefcaseId": 6,
-  "ticker": "ABCD",
+  "briefcaseId": 7,
+  "ticker": "AFLT",
   "quantity": 5
 }
 
@@ -50,7 +50,7 @@ Content-Type: application/json
 Authorization: Bearer {{apiKey}}
 
 {
-  "briefcaseId": 6
+  "briefcaseId": 7
 }
 
 ###
