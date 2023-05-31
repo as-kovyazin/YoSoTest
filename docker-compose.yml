@@ -3,6 +3,8 @@ version: '3.5'
 services:
 
   db-postgres:
+    env_file:
+      - ./.env
     container_name: db-postgres
     image: postgres
     environment:
@@ -18,6 +20,8 @@ services:
       - net
 
   php-fpm-7.4:
+    env_file:
+      - ./.env
     container_name: php-fpm-7.4
     build:
       context: ./php-fpm/7.4
@@ -36,6 +40,8 @@ services:
       - db-postgres
 
   nginx:
+    env_file:
+      - ./.env
     container_name: nginx
     image: nginx:stable-alpine
     ports:
