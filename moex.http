@@ -1,0 +1,6 @@
+###
+// получение цен бумаг
+GET http://iss.moex.com/iss/statistics/engines/stock/currentprices.json?tradingsession=1&iss.meta
+Content-Type: application/json
+
+###

@@ -3,48 +3,54 @@
 POST http://localhost:8000/user/create
 Content-Type: application/json
 
+> {%
+    client.global.set("apiKey", response.body.apiKey);
+%}
+
 ###
 // получить список портфелей пользователя
 GET http://localhost:8000/api/briefcase
 Content-Type: application/json
-Authorization: Bearer aa3aa4dec38adde0cd38
+Authorization: Bearer {{apiKey}}
 
 ###
 // создать пустой портфель пользователя
 POST http://localhost:8000/api/briefcase
 Content-Type: application/json
-Authorization: Bearer aa3aa4dec38adde0cd38
+Authorization: Bearer {{apiKey}}
 
 ###
 // Добавление акции в портфель
-POST http://localhost:8000/api/briefcase/promotion_add
+POST http://localhost:8000/api/briefcase/promotion/add
 Content-Type: application/json
-Authorization: Bearer aa3aa4dec38adde0cd38
+Authorization: Bearer {{apiKey}}
 
 {
-  "briefcaseId": 3,
+  "briefcaseId": 6,
   "ticker": "ABCD",
   "quantity": 10
 }
 
 ###
 // Удаление акции из портфеля
-POST http://localhost:8000/api/briefcase/promotion_delete
+POST http://localhost:8000/api/briefcase/promotion/delete
 Content-Type: application/json
-Authorization: Bearer aa3aa4dec38adde0cd38
+Authorization: Bearer {{apiKey}}
 
 {
-  "briefcaseId": 3,
+  "briefcaseId": 6,
   "ticker": "ABCD",
-  "quantity": 20
+  "quantity": 5
 }
 
 ###
 // Просмотр стоимости портфеля
-POST http://localhost:8000/api/briefcase/cost
+POST http://localhost:8000/api/briefcase/total_cost
 Content-Type: application/json
-Authorization: Bearer aa3aa4dec38adde0cd38
+Authorization: Bearer {{apiKey}}
 
 {
-  "briefcaseId": 3
+  "briefcaseId": 6
 }
+
+###
