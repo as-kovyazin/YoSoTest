@@ -36,7 +36,8 @@ class Briefcase extends MainController
         }
 
         $result = [
-            'briefcase' => $briefcase->getId(),
+            'id' => $briefcase->getId(),
+            'name' => $briefcase->getName(),
         ];
 
         return $this->json($result);
@@ -104,7 +105,7 @@ class Briefcase extends MainController
         $costs = $briefcaseService->getBriefcaseCosts($requestDTO);
 
         $result = [
-            'costs' => $costs
+            'tickers' => $costs
         ];
 
         return $this->json($result);

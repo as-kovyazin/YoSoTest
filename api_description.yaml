@@ -7,16 +7,16 @@ info:
 servers:
   - url: http://localhost:8000
 tags:
-  - name: user
-    description: Операции с пользователем
   - name: briefcase
     description: Операции с портфелем акций
+  - name: user
+    description: Операции с пользователем
 paths:
   /user/create:
     post:
       tags:
         - user
-      summary: Создание пользователя
+      summary: Создание пользователя и получение API-ключа
       description: Создание пользователя и получение API-ключа
       operationId: getApiKey
       responses:
@@ -41,9 +41,100 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/briefcaseList'
+                $ref: '#/components/schemas/BriefcaseList'
         '401':
           $ref: '#/components/responses/Unauthorized'
+    post:
+      tags:
+        - briefcase
+      summary: Создать пустой портфель
+      description: Создать пустой портфель
+      operationId: createBriefcase
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Briefcase'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /api/briefcase/promotion/add:
+    post:
+      tags:
+        - briefcase
+      summary: Добавление акции в портфель
+      description: Добавление акции в портфель
+      operationId: addPromotionInBriefcase
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Promotion'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /api/briefcase/promotion/delete:
+    post:
+      tags:
+        - briefcase
+      summary: Удаление акции из портфеля
+      description: Удаление акции из портфеля
+      operationId: removePromotionFromBriefcase
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Promotion'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /api/briefcase/total_cost:
+    post:
+      tags:
+        - briefcase
+      summary: Получить информацию о стоимости портфеля
+      description: Получить информацию о стоимости портфеля
+      operationId: getBriefcaseCost
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BriefcasePromotionsList'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 components:
   responses:
     NotFound:
@@ -58,32 +149,101 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    BadRequest:
+      description: some data is not valid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   schemas:
     API-key:
       type: object
       properties:
         apiKey:
           type: string
-    briefcaseList:
+          description: API-ключ для взаимодействия с сервисом
+          example: af51cf6e3503a2f1c483
+    BriefcaseList:
       type: object
       properties:
         briefcases:
+          type: array
           items:
-            $ref: '#/components/schemas/briefcase'
-    briefcase:
+            $ref: '#/components/schemas/Briefcase'
+    BriefcasePromotionsList:
+      type: object
+      properties:
+        tickers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Ticker'
+    Ticker:
+      type: object
+      properties:
+        ticker:
+          type: string
+          example: AFLT
+          description: Тикер в портфеле
+        quantity:
+          type: integer
+          format: int64
+          example: 10
+          description: Количество тикера в портфеле
+        cost:
+          type: number
+          format: double
+          example: 123.45
+          description: Стоимость тикера, полученная из мосбиржи
+        total_cost:
+          type: number
+          format: double
+          example: 1234.5
+          description: Общая стоимость тикера в портфеле, полученная из мосбиржи
+        share:
+          type: number
+          format: double
+          example: 10.11
+          description: Доля в процентах от общей стоимости портфеля
+    Briefcase:
       type: object
       properties:
         id:
           type: integer
+          format: int64
+          example: 1
+          description: ID портфеля
         name:
           type: string
+          example: какое-нибудь название портфеля
+          description: Название портфеля
+    Promotion:
+      type: object
+      properties:
+        briefcaseId:
+          type: integer
+          format: int64
+          example: 2
+          description: ID портфеля
+        ticker:
+          type: string
+          example: AFLT
+          description: Тикер
+        quantity:
+          type: integer
+          format: int64
+          example: 10
+          description: Количество тикера в портфеле
     Error:
       type: object
       properties:
         message:
           type: string
-      required:
-        - message
   securitySchemes:
     bearerAuth:
       type: http
